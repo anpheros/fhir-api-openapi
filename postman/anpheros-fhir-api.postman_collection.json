@@ -1,0 +1,2629 @@
+{
+  "info": {
+    "name": "Anpheros FHIR R4 Healthcare API",
+    "description": "HL7 FHIR R4 healthcare API with patient consent, provenance and an AI context API.\n\n* **FHIR R4** at `/fhir/R4`: the strict interface (search, history, transactions, `$everything`, `$summary` IPS, `$validate`).\n* **REST v1** at `/v1`: the simplified interface for app developers, same data, same ids.\n* **OAuth 2.1 / SMART App Launch** at `/oauth/*`: patient consent with PKCE.\n* **SMART Health Links** at `/shl/{link_id}`.\n\nAuthenticate with an API key (`Authorization: Bearer sk_test_…`) or an OAuth access token (`at_…`).\nGet a free sandbox key with 30 synthetic patients: https://platform.anpheros.com/dashboard/?utm_source=github&utm_medium=openapi&utm_content=fhir-api-openapi\nEvery response carries `Anpheros-Request-Id`; POSTs accept `Idempotency-Key`.\n",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://platform.anpheros.com"
+    },
+    {
+      "key": "apiKey",
+      "value": "sk_test_your_sandbox_key"
+    }
+  ],
+  "item": [
+    {
+      "name": "OAuth",
+      "item": [
+        {
+          "name": "Consent page (authorization code + PKCE)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oauth/authorize",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oauth",
+                "authorize"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "response_type",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "client_id",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "redirect_uri",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "scope",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "state",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "code_challenge",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "code_challenge_method",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "purpose",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "patient",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "resource",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consent page (authorization code + PKCE)"
+          }
+        },
+        {
+          "name": "Token endpoint",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oauth/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oauth",
+                "token"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Token endpoint"
+          }
+        },
+        {
+          "name": "Revoke an access or refresh token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oauth/revoke",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oauth",
+                "revoke"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Revoke an access or refresh token"
+          }
+        },
+        {
+          "name": "Ask a person for access to their record (CIBA, poll mode)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oauth/bc-authorize",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oauth",
+                "bc-authorize"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Recepția clinicii scrie emailul persoanei; persoana aprobă în aplicația ei. Doar clienți confidențiali."
+          }
+        }
+      ]
+    },
+    {
+      "name": "FHIR R4",
+      "item": [
+        {
+          "name": "CapabilityStatement",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/metadata",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "metadata"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "CapabilityStatement"
+          }
+        },
+        {
+          "name": "CodeSystem/$lookup (Anpheros symptom concepts)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/CodeSystem/$lookup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "CodeSystem",
+                "$lookup"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "system",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "code",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "displayLanguage",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "CodeSystem/$lookup (Anpheros symptom concepts)"
+          }
+        },
+        {
+          "name": "ValueSet/$expand by url",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/ValueSet/$expand",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "ValueSet",
+                "$expand"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "filter",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "displayLanguage",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "count",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "ValueSet/$expand by url"
+          }
+        },
+        {
+          "name": "CodeSystem search (read-only terminology)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/CodeSystem",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "CodeSystem"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "CodeSystem search (read-only terminology)"
+          }
+        },
+        {
+          "name": "CodeSystem read (read-only terminology)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/CodeSystem/:rid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "CodeSystem",
+                ":rid"
+              ],
+              "variable": [
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "CodeSystem read (read-only terminology)"
+          }
+        },
+        {
+          "name": "ValueSet search (read-only terminology)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/ValueSet",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "ValueSet"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "ValueSet search (read-only terminology)"
+          }
+        },
+        {
+          "name": "ValueSet read (read-only terminology)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/ValueSet/:rid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "ValueSet",
+                ":rid"
+              ],
+              "variable": [
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "ValueSet read (read-only terminology)"
+          }
+        },
+        {
+          "name": "ConceptMap search (read-only terminology)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/ConceptMap",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "ConceptMap"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "name",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "ConceptMap search (read-only terminology)"
+          }
+        },
+        {
+          "name": "ConceptMap read (read-only terminology)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/ConceptMap/:rid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "ConceptMap",
+                ":rid"
+              ],
+              "variable": [
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "ConceptMap read (read-only terminology)"
+          }
+        },
+        {
+          "name": "Bundle transaction / batch",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Bundle transaction / batch"
+          }
+        },
+        {
+          "name": "Patient/$everything",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/Patient/:rid/$everything",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "Patient",
+                ":rid",
+                "$everything"
+              ],
+              "variable": [
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Patient/$everything"
+          }
+        },
+        {
+          "name": "Patient/$summary (IPS document Bundle)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/Patient/:rid/$summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                "Patient",
+                ":rid",
+                "$summary"
+              ],
+              "variable": [
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Patient/$summary (IPS document Bundle)"
+          }
+        },
+        {
+          "name": "$validate (structure + optional profile)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type/$validate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type",
+                "$validate"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "profile",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "$validate (structure + optional profile)"
+          }
+        },
+        {
+          "name": "Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Search"
+          }
+        },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Create"
+          }
+        },
+        {
+          "name": "Read",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type/:rid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type",
+                ":rid"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                },
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Read"
+          }
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type/:rid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type",
+                ":rid"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                },
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Update"
+          }
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type/:rid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type",
+                ":rid"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                },
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "_purge",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "`?_purge=true` (doar Patient, doar proiectul care l-a creat): după ștergerea obișnuită, care anunță\nabonații, dosarul se șterge fizic, cu istoric și documente. Folosit la ștergerea unui cont Anpheros."
+          }
+        },
+        {
+          "name": "History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type/:rid/_history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type",
+                ":rid",
+                "_history"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                },
+                {
+                  "key": "rid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "History"
+          }
+        },
+        {
+          "name": "Version read",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fhir/R4/:resource_type/:rid/_history/:vid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fhir",
+                "R4",
+                ":resource_type",
+                ":rid",
+                "_history",
+                ":vid"
+              ],
+              "variable": [
+                {
+                  "key": "resource_type",
+                  "value": ""
+                },
+                {
+                  "key": "rid",
+                  "value": ""
+                },
+                {
+                  "key": "vid",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Version read"
+          }
+        }
+      ]
+    },
+    {
+      "name": "REST v1",
+      "item": [
+        {
+          "name": "List patients visible to this project",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List patients visible to this project"
+          }
+        },
+        {
+          "name": "Create a patient owned by this project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Create a patient owned by this project"
+          }
+        },
+        {
+          "name": "Read a patient",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Read a patient"
+          }
+        },
+        {
+          "name": "Update a patient's demographics",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Update a patient's demographics"
+          }
+        },
+        {
+          "name": "List observations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/observations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "observations"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "code",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List observations"
+          }
+        },
+        {
+          "name": "Create observation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/observations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "observations"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Create observation"
+          }
+        },
+        {
+          "name": "Read observation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/observations/:item_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "observations",
+                ":item_id"
+              ],
+              "variable": [
+                {
+                  "key": "item_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Read observation"
+          }
+        },
+        {
+          "name": "Delete observation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/observations/:item_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "observations",
+                ":item_id"
+              ],
+              "variable": [
+                {
+                  "key": "item_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Delete observation"
+          }
+        },
+        {
+          "name": "List conditions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/conditions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "conditions"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "clinical_status",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List conditions"
+          }
+        },
+        {
+          "name": "Create condition",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/conditions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "conditions"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Create condition"
+          }
+        },
+        {
+          "name": "Read condition",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/conditions/:item_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "conditions",
+                ":item_id"
+              ],
+              "variable": [
+                {
+                  "key": "item_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Read condition"
+          }
+        },
+        {
+          "name": "Delete condition",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/conditions/:item_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "conditions",
+                ":item_id"
+              ],
+              "variable": [
+                {
+                  "key": "item_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Delete condition"
+          }
+        },
+        {
+          "name": "List medications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/medications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "medications"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List medications"
+          }
+        },
+        {
+          "name": "Create medication",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/medications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "medications"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Create medication"
+          }
+        },
+        {
+          "name": "Read medication",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/medications/:item_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "medications",
+                ":item_id"
+              ],
+              "variable": [
+                {
+                  "key": "item_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Read medication"
+          }
+        },
+        {
+          "name": "Delete medication",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/medications/:item_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "medications",
+                ":item_id"
+              ],
+              "variable": [
+                {
+                  "key": "item_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Delete medication"
+          }
+        },
+        {
+          "name": "List documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "documents"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "kind",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List documents"
+          }
+        },
+        {
+          "name": "Create a document and get an upload target",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "documents"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Create a document and get an upload target"
+          }
+        },
+        {
+          "name": "Read a document's metadata",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/documents/:doc_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "documents",
+                ":doc_id"
+              ],
+              "variable": [
+                {
+                  "key": "doc_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Read a document's metadata"
+          }
+        },
+        {
+          "name": "Upload the document's bytes through the platform",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/documents/:doc_id/content",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "documents",
+                ":doc_id",
+                "content"
+              ],
+              "variable": [
+                {
+                  "key": "doc_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Upload the document's bytes through the platform"
+          }
+        },
+        {
+          "name": "Download the original document",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/documents/:doc_id/content",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "documents",
+                ":doc_id",
+                "content"
+              ],
+              "variable": [
+                {
+                  "key": "doc_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Download the original document"
+          }
+        },
+        {
+          "name": "Finalize after a direct-to-storage upload",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/documents/:doc_id/finalize",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "documents",
+                ":doc_id",
+                "finalize"
+              ],
+              "variable": [
+                {
+                  "key": "doc_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Finalize after a direct-to-storage upload"
+          }
+        },
+        {
+          "name": "What this application may do for the patient, until when",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/grants",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "grants"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "What this application may do for the patient, until when"
+          }
+        },
+        {
+          "name": "Build an AI-ready, provenance-labelled context for a patient",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/context",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "context"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Build an AI-ready, provenance-labelled context for a patient"
+          }
+        },
+        {
+          "name": "Health patterns in a patient's record (beta)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/patterns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "patterns"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "end",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "window_days",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "types",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "min_strength",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Trends, deviations from the person's usual level and symptom recurrence, each with its period, supporting\nresources, method version and limitations. Derived by fixed statistical rules: not diagnoses, not causes."
+          }
+        },
+        {
+          "name": "One health-pattern finding (beta)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/patterns/:finding_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "patterns",
+                ":finding_id"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                },
+                {
+                  "key": "finding_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "end",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "window_days",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Recomputed for the same window; when the record changed, the finding gets a new id and this one answers 404."
+          }
+        },
+        {
+          "name": "All supporting resources of a finding (beta)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/patterns/:finding_id/evidence",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "patterns",
+                ":finding_id",
+                "evidence"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                },
+                {
+                  "key": "finding_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "end",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "window_days",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "All supporting resources of a finding (beta)"
+          }
+        },
+        {
+          "name": "One measurement over time, one value per day (beta)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/series",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "series"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "unit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "component_of",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Daily medians (UTC days) of one measurement with data quality: coverage, gaps, sources, source changes.\nValues written by AI, entered-in-error results and month-only dates are left out and counted."
+          }
+        },
+        {
+          "name": "Compare one measurement between two periods (beta)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/patterns/compare",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "patterns",
+                "compare"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Daily medians of the second period against the first (Mann–Whitney, or a seeded permutation test with repeated\nvalues). One test only: q = p. The periods must not overlap and each may span at most 730 days."
+          }
+        },
+        {
+          "name": "List or search symptom concepts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/symptoms",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                "symptoms"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "icd10",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "icd11",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "body_system",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "kind",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Names, ICD-10 and ICD-11 codes, body system, labels in 20 languages, match terms and source-quoted warning signs;\nno causes or associations. Every response carries the release and `clinical_review: false` until a clinician reviews it."
+          }
+        },
+        {
+          "name": "Look up one symptom concept",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/symptoms/:concept_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                "symptoms",
+                ":concept_id"
+              ],
+              "variable": [
+                {
+                  "key": "concept_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Look up one symptom concept"
+          }
+        },
+        {
+          "name": "Search symptoms, conditions and treatments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "search"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "types",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Public, no API key needed (60 searches a minute and 2,000 a day per IP without a key). Full-text search with synonyms over the public catalog. Ordered by how the text matched (exact name, start of\na name, every word, part of a word), then alphabetically: no popularity, score or recommendation. General\ninformation only: Anpheros does not diagnose and does not recommend treatment."
+          }
+        },
+        {
+          "name": "Look up one catalog entry (symptom, condition or treatment)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/search/:concept_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "search",
+                ":concept_id"
+              ],
+              "variable": [
+                {
+                  "key": "concept_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Public, no API key needed (same limits as /v1/search). The same entry as /v1/terminology/{symptoms|conditions|treatments}/{id}, in the catalog shape for every type: codes,\nnames, the MedlinePlus summary, links that appear in a cited source, quoted indications and the required attribution."
+          }
+        },
+        {
+          "name": "List or search conditions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/conditions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                "conditions"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "WHO ICD-10 and ICD-11 codes and titles, names in 20 languages, the MedlinePlus summary (public domain), the\nsymptoms the sources link to it and the treatments with an official indication for it, alphabetically."
+          }
+        },
+        {
+          "name": "Look up one condition",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/conditions/:concept_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                "conditions",
+                ":concept_id"
+              ],
+              "variable": [
+                {
+                  "key": "concept_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Look up one condition"
+          }
+        },
+        {
+          "name": "List or search treatments (active substances)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/treatments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                "treatments"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "The active substance (INN) with its RxNorm and EMA identifiers, and its indications quoted unchanged from EMA\n(EPAR) and FDA labels, with source and date. Not a recommendation: what a medicine is approved for, not whether\nit is right for anyone."
+          }
+        },
+        {
+          "name": "Look up one treatment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/treatments/:concept_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                "treatments",
+                ":concept_id"
+              ],
+              "variable": [
+                {
+                  "key": "concept_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Look up one treatment"
+          }
+        },
+        {
+          "name": "Search the bundled LOINC subset (ATC lookup temporarily unavailable)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/:system",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                ":system"
+              ],
+              "variable": [
+                {
+                  "key": "system",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Search the bundled LOINC subset (ATC lookup temporarily unavailable)"
+          }
+        },
+        {
+          "name": "Look up one code",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/terminology/:system/:code",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "terminology",
+                ":system",
+                ":code"
+              ],
+              "variable": [
+                {
+                  "key": "system",
+                  "value": ""
+                },
+                {
+                  "key": "code",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Look up one code"
+          }
+        },
+        {
+          "name": "Neurology view: head imaging, episodes, head symptoms, treatment, before/after the last MRI (beta)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/neuro-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "neuro-summary"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "today",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Vederea neurologului (Neuro E7, 17 oct 2026): ce vede pacientul în meniul Neuro, din resursele deja\noglindite, sub aceleași reguli de consimțământ ca o căutare directă; intră în jurnalul de acces."
+          }
+        },
+        {
+          "name": "Chronological view across resource types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/timeline",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "timeline"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "types",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Chronological view across resource types"
+          }
+        },
+        {
+          "name": "Who wrote a resource, and when",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/provenance/:resource_type/:resource_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "provenance",
+                ":resource_type",
+                ":resource_id"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                },
+                {
+                  "key": "resource_type",
+                  "value": ""
+                },
+                {
+                  "key": "resource_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Who wrote a resource, and when"
+          }
+        },
+        {
+          "name": "Import a lab report (CSV, HL7 v2 ORU^R01 or JSON) as laboratory Observations",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/patients/:patient_id/labs/import",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                ":patient_id",
+                "labs",
+                "import"
+              ],
+              "variable": [
+                {
+                  "key": "patient_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Un buletin întreg într-o singură cerere: fiecare rând devine un Observation de\nlaborator (LOINC unde îl recunoaștem, altfel codul laboratorului + textul de pe buletin),\ncu interval de referință și interpretare. Rândurile deja importate (același buletin,\nmarker, dată și valoare) sunt sărite, deci retrimiterea e sigură."
+          }
+        },
+        {
+          "name": "Register a webhook endpoint (the secret is shown once)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Register a webhook endpoint (the secret is shown once)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List webhook endpoints",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "List webhook endpoints"
+          }
+        },
+        {
+          "name": "Event types you can subscribe to",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/event-types",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                "event-types"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "Event types you can subscribe to"
+          }
+        },
+        {
+          "name": "One endpoint",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "One endpoint"
+          }
+        },
+        {
+          "name": "Change url, events, description or active",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Change url, events, description or active",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          }
+        },
+        {
+          "name": "Remove an endpoint (pending deliveries are dropped)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Remove an endpoint (pending deliveries are dropped)"
+          }
+        },
+        {
+          "name": "New signing secret (shown once); the old one stops working immediately",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id/rotate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id",
+                "rotate"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "New signing secret (shown once); the old one stops working immediately"
+          }
+        },
+        {
+          "name": "Send a test event to this endpoint",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id/ping",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id",
+                "ping"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Send a test event to this endpoint"
+          }
+        },
+        {
+          "name": "Delivery log of an endpoint, newest first",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id/deliveries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id",
+                "deliveries"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                }
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Delivery log of an endpoint, newest first"
+          }
+        },
+        {
+          "name": "Dead-letter: send every exhausted delivery again now",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id/deliveries/redeliver-exhausted",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id",
+                "deliveries",
+                "redeliver-exhausted"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Dead-letter: send every exhausted delivery again now"
+          }
+        },
+        {
+          "name": "Send a delivery again now",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v1/webhooks/:endpoint_id/deliveries/:delivery_id/redeliver",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "webhooks",
+                ":endpoint_id",
+                "deliveries",
+                ":delivery_id",
+                "redeliver"
+              ],
+              "variable": [
+                {
+                  "key": "endpoint_id",
+                  "value": ""
+                },
+                {
+                  "key": "delivery_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "Send a delivery again now"
+          }
+        }
+      ]
+    },
+    {
+      "name": "SMART Health Links",
+      "item": [
+        {
+          "name": "SMART Health Link manifest (the content, encrypted with the link's key)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/shl/:link_id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "shl",
+                ":link_id"
+              ],
+              "variable": [
+                {
+                  "key": "link_id",
+                  "value": ""
+                }
+              ],
+              "query": []
+            },
+            "description": "SMART Health Link manifest (the content, encrypted with the link's key)",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
